@@ -1,0 +1,135 @@
+
+Companies : #apple #paypal
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Challenge : 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Two strings, X and Y, are considered similar if either they are identical or we can make them equivalent by swapping at most two letters (in distinct positions) within the string X.
+
+For example, "tars" and "rats" are similar (swapping at positions 0 and 2), and "rats" and "arts" are similar, but "star" is not similar to "tars", "rats", or "arts".
+
+Together, these form two connected groups by similarity: {"tars", "rats", "arts"} and {"star"}.  Notice that "tars" and "arts" are in the same group even though they are not similar.  Formally, each group is such that a word is in the group if and only if it is similar to at least one other word in the group.
+
+We are given a list strs of strings where every string in strs is an anagram of every other string in strs. How many groups are there?
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+Example 1:
+
+Input: strs = ["tars","rats","arts","star"]
+Output: 2
+Example 2:
+
+Input: strs = ["omv","ovm"]
+Output: 1
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Approach : 
+
+We will be solving it by using union find approach.
+Why Union Find ? 
+All the approaches DFS, BFS and Union Find have O(n2*m) time complexity, where n is the arr length and m is the string length.
+But DFS and BFS, we do maintain adjacency list of O(n2) space complexity, and dfs has recursions, bfs has queue. If we can solve it 
+using arrays, why to go other approaches, here in this union find the operations are O(1), so too fast.
+
+What approach does Union Find use ?
+Union Find uses lets make changes now, if anything wrong we can update it later.
+Feeling crazy with my answer ? Yes, you heared it right. It follows the same approach, lets make changes now, update them later.
+
+At first how many groups are there, obviously n - array length. So for every element itself is the parent.
+
+Lets say we found two elements are connected, how can we know that ? Simple, every program has its own check to know connectivity.
+
+And then union both of them. Wait ? what is union here ? i didn't explain it yet right.
+
+In union find approach, we come across two methods, find(x) -> finding parent, and union(a,b).
+lets talk about union first,
+what is union(a,b):
+here in this approach, first we find the parent of a and b (call them pa, pb).
+our main goal in this approach is to grouping the connected components rights, what if we find both of them have same parent, just ignore 
+that case, means return.
+
+And i'm saying it again, we will union when we found they both are connected.
+In the beginning, we have [1...n] groups, as we didn't union any of them, means didn't grouped any of them.
+once we group any two of them, means, we will assign parent of one to another, usually, we will assign 
+to the lower group Id, i.e, rank id. so in the end we can say we have [1...g] groups.
+
+so if rank of pa (parent of a) is lesser than rank of pb. then we will assign pb to under pa.
+if greater than, then pa to under pb.
+if both of them have same rank, so we are increasing the rank of other parent(it is not necessary i didn't find any change without this operation).
+
+so, here in this operation, we updating parent of only current element, what about all the elements of that parent a group or parent b group.
+Thats where find(x) comes, if come to know parent[x]!=x, somewhere in the above algorithm it is modified, so we check until where the root of the parent.
+where for each group there is root element which has parent[x]=x, which is initially set value. 
+Are you sure, really each group contains one parent[x]=x, because, when we map one parent to another, we are only modifying one parent, 
+thats why we use ranks check, we always set less rank's parent as it is, and change the higher ranks parent.
+
+here you come across it again, make changes now, and update all other later.
+Our intuition is to not give same rank both of them, even intitially we have given 0 to all of them,
+when both of them have rank, we set the parent one to less without modifying, and increase the child's rank.
+and in the future when we check for ranks again, we take smaller one, and update parent from that.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Program :
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class UnionFind{
+    int[] parent, rank;
+    int groups;
+
+    UnionFind(int n){
+        this.groups = n;
+        this.parent = new int[n];
+        this.rank = new int[n];
+        for(int i=0;i<n;i++)
+            parent[i]=i;
+    }
+
+    int find(int x){
+        if(parent[x]!=x)
+            parent[x]=find(parent[x]);
+        return parent[x];
+    }
+
+    void union(int a,int b){
+        int pa=find(a);
+        int pb=find(b);
+        if(pa==pb) return;
+        if(rank[pa]>rank[pb])
+            parent[pb]=pa;
+        else if(rank[pb]>rank[pa])
+            parent[pa]=pb;
+        else{
+            parent[pa]=pb;
+            rank[pb]++;
+        }
+        groups--;
+    }
+}
+class Solution {
+
+    boolean similar(String a,String b){
+        int diff=0;
+        for(int i=0;i<a.length();i++){
+            if(a.charAt(i)!=b.charAt(i))
+                diff++;
+            if(diff>2)
+                return false;
+        }
+        return true;
+    }
+
+    public int numSimilarGroups(String[] strs) {
+        int len = strs.length;
+        UnionFind uf=new UnionFind(len);
+        for(int i=0;i<len;i++){
+            for(int j=i+1;j<len;j++){
+                if(i!=j && similar(strs[i],strs[j]))
+                    uf.union(i,j);
+            }
+        }
+        return uf.groups;
+    }
+}
+
