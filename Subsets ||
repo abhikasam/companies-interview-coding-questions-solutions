@@ -1,0 +1,75 @@
+Problem link : https://leetcode.com/problems/subsets-ii/description/
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Companeis : #amazon #bold #meta #google
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Description
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Given an integer array nums that may contain duplicates, return all possible subsets (the power set).
+The solution set must not contain duplicate subsets. Return the solution in any order.
+
+Example 1:
+
+Input: nums = [1,2,2]
+Output: [[],[1],[1,2],[1,2,2],[2],[2,2]]
+Example 2:
+
+Input: nums = [0]
+Output: [[],[0]]
+ 
+
+Constraints:
+
+1 <= nums.length <= 10
+-10 <= nums[i] <= 10
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Explanation
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+first we are sorting the array, as to get the duplicate elements next to each other.
+and our approach is dfs.
+
+why dfs ? 
+
+at first we starts with empty array.
+at each function call we get a subset result, and to that we either add next element or ignores the next element.
+
+(1,2,3) => for this subsets can be (),(1),(2),(3),(1,2),(1,3),(2,3),(1,2,3) => 1 + 3 + 3 + 1 => 8
+(1,1,2) => for this subsets are (),(1),(2),(1,1),(1,2),(1,1,2) => 1 + 2 + 2 + 1 => 6
+(1,1,1) => for this subsets are (),(1),(1,1),(1,1,1) => 1 + 1 + 1 + 1 => 4
+
+the above are the expected answers.
+
+for (1,2) => we can take any one of them at any time so, (),(1),(2),(1,2).
+but for (1,1) => (),(1),(1,1).
+at first it starts with empty list.
+then we add that to the result.
+we won't check for the first element, we direct add it. (i > ind).
+and it do it for every step, in that way it will add (1),(1,1).
+
+imp point: here we don't return, we just continue, because, if there is a matched element we continue until there is no matched element found.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+class Solution {
+    void dfs(int ind,int[] nums,List<Integer> path,List<List<Integer>> result){
+        result.add(new ArrayList<>(path));
+        for(int i=ind;i<nums.length;i++){
+            if(i>ind && nums[i]==nums[i-1]) continue;
+            path.add(nums[i]);
+            dfs(i+1,nums,path,result);
+            path.remove(path.size()-1);
+        }
+    }
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> result=new ArrayList();
+        dfs(0,nums,new ArrayList<>(),result);
+        return result;
+    }
+}
