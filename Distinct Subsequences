@@ -1,0 +1,73 @@
+Program : 
+https://leetcode.com/problems/distinct-subsequences/description/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Companies : #amazon #barclays #google #mathworks
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Problem : 
+Given two strings s and t, return the number of distinct subsequences of s which equals t.
+
+The test cases are generated so that the answer fits on a 32-bit signed integer.
+
+Example 1:
+
+Input: s = "rabbbit", t = "rabbit"
+Output: 3
+Explanation:
+As shown below, there are 3 ways you can generate "rabbit" from s.
+rabbbit
+rabbbit
+rabbbit
+Example 2:
+
+Input: s = "babgbag", t = "bag"
+Output: 5
+Explanation:
+As shown below, there are 5 ways you can generate "bag" from s.
+babgbag
+babgbag
+babgbag
+babgbag
+babgbag
+ 
+
+Constraints:
+
+1 <= s.length, t.length <= 1000
+s and t consist of English letters.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Explanation :
+
+we are using dp approach here ? but why ?
+at ith index we have to get the number of sequences happened so far + current possible.
+
+we have source (s) and possible sequence (target - t).
+so at each index (i) of t, we will store how many sub sequences possible.
+
+as we have to update current value with the previously occurred sub sequence value.
+dp[j]+=dp[j-1] when both current iteration value with the respective (j-1)th value of t.
+
+so if we iterate j from 0 to seq len, if make change for j=2, and when we come to j=3, dp[j-1] will be already changed.
+so instead we iterate j from seq len to 0, so we will have both current and prev index value both unchanged.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Solution : 
+
+class Solution {
+    public int numDistinct(String s, String t) {
+        int srcLen = s.length();
+        int seqLen = t.length();
+        int[] dp = new int[seqLen+1];
+        dp[0]=1;
+        for(int i=1;i<srcLen+1;i++){
+            for(int j=seqLen;j>0;j--){
+                if(s.charAt(i-1)==t.charAt(j-1))
+                    dp[j]+=dp[j-1];
+            }
+        }
+        return dp[seqLen];        
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
