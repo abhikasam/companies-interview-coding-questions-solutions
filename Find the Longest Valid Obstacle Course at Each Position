@@ -1,0 +1,131 @@
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Program : https://leetcode.com/problems/find-the-longest-valid-obstacle-course-at-each-position/description/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Problem : 
+
+ou want to build some obstacle courses. You are given a 0-indexed integer array obstacles of length n, where obstacles[i] describes the height of the ith obstacle.
+
+For every index i between 0 and n - 1 (inclusive), find the length of the longest obstacle course in obstacles such that:
+
+You choose any number of obstacles between 0 and i inclusive.
+You must include the ith obstacle in the course.
+You must put the chosen obstacles in the same order as they appear in obstacles.
+Every obstacle (except the first) is taller than or the same height as the obstacle immediately before it.
+Return an array ans of length n, where ans[i] is the length of the longest obstacle course for index i as described above.
+
+
+Example 1:
+
+Input: obstacles = [1,2,3,2]
+Output: [1,2,3,3]
+Explanation: The longest valid obstacle course at each position is:
+- i = 0: [1], [1] has length 1.
+- i = 1: [1,2], [1,2] has length 2.
+- i = 2: [1,2,3], [1,2,3] has length 3.
+- i = 3: [1,2,3,2], [1,2,2] has length 3.
+Example 2:
+
+Input: obstacles = [2,2,1]
+Output: [1,2,1]
+Explanation: The longest valid obstacle course at each position is:
+- i = 0: [2], [2] has length 1.
+- i = 1: [2,2], [2,2] has length 2.
+- i = 2: [2,2,1], [1] has length 1.
+Example 3:
+
+Input: obstacles = [3,1,5,6,4,2]
+Output: [1,1,2,3,2,2]
+Explanation: The longest valid obstacle course at each position is:
+- i = 0: [3], [3] has length 1.
+- i = 1: [3,1], [1] has length 1.
+- i = 2: [3,1,5], [3,5] has length 2. [1,5] is also valid.
+- i = 3: [3,1,5,6], [3,5,6] has length 3. [1,5,6] is also valid.
+- i = 4: [3,1,5,6,4], [3,4] has length 2. [1,4] is also valid.
+- i = 5: [3,1,5,6,4,2], [1,2] has length 2.
+ 
+
+Constraints:
+
+n == obstacles.length
+1 <= n <= 105
+1 <= obstacles[i] <= 107
+ 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Explanation : 
+
+at each index of the result we are storing the no. of increasing or equal elements before that including itself.
+so for that we maintains an array, at each index we either inserts it, or updates old value. i.e,
+[3,1,5,6,4,2]
+for 0th index. => [3]
+for 1th index. => [1] (as the elements should be increasing any sequence that forms with 3 can be formed with 1)
+for 2nd index. => [1,5] 
+for 3rd index. => [1,5,6]
+for 4th index. => [1,4,6] (so in this way, any sequence that can be formed with 5 can be formed with 4 as well)
+for 5th index. => [1,2,6]
+
+in this way for each index we store the result as the arr size => [1,1,2,3,3,3].
+
+so how can we find the index so that we can replace the elements ?
+
+we have to get the lower bounds.
+
+Here comes the trickest part, there are many binary search approaches, one solves, lowerbound, one solves upperbound, one solves exact find.
+Here 1st what we need ?
+we have to get the first maximum element index for a value, i.e, first index of an element which is greater than or equals i.e, lowerbound.
+
+so if we found same element anywhere ? we have to look if it is first element or any same values exists before, i.e, end = mid;
+if we find greater element anywhere ? if any less value doesn't exists, the greater element will be the answer, or else less value index. i.e, end = mid;
+in both the cases we store the mid because it is possible solution.
+
+if we find lesser than, that is not at all answer, so we just skip it. so, srt=mid+1.
+
+in this way our logic will be.
+
+            if(arr[mid] > obstacle)
+                end = mid;
+            else 
+                srt=mid+1;
+
+in this way for each index, we loop through the elements are find the result.
+
+and why srt<end not srt<=end, because when we want to find insertion points or upper or lower bounds, we will use <, when we want to find exact index we use <= and return -1 on base
+condition.
+
+for while <=, it will end at left>right, which not a valid condition at all, at such case we maintain result and update it every required moment, and return it.
+
+Every <= condition can be written in < form. Better to go with one approach everytime.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution :
+class Solution {
+    int findIndex(int[] arr,int obstacle,int end){
+        int srt = 0;
+        while(srt<end){
+            int mid = (srt+end)>>1;
+            if(arr[mid] > obstacle){
+                end = mid;
+            }
+            else 
+                srt=mid+1;
+        }
+        return srt;
+    }
+    public int[] longestObstacleCourseAtEachPosition(int[] obstacles) {
+        int len = obstacles.length;
+        int[] result = new int[len];
+        int[] arr = new int[len];
+        int size = 0;
+        arr[0] = (int)(1e8);
+        for(int i=0;i<len;i++){
+            int index = findIndex(arr,obstacles[i],size);
+            if(index==size){
+                arr[size++]=obstacles[i];
+            }
+            else arr[index] = Math.min(arr[index],obstacles[i]);
+            result[i] = index+1;
+        }
+        return result;
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
