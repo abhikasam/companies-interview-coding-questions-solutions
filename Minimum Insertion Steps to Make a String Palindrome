@@ -1,0 +1,77 @@
+
+Program : https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/description/
+
+Companies : #bold #google
+
+Problem :
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Given a string s. In one step you can insert any character at any index of the string.
+
+Return the minimum number of steps to make s palindrome.
+
+A Palindrome String is one that reads the same backward as well as forward.
+
+Example 1:
+
+Input: s = "zzazz"
+Output: 0
+Explanation: The string "zzazz" is already palindrome we do not need any insertions.
+Example 2:
+
+Input: s = "mbadm"
+Output: 2
+Explanation: String can be "mbdadbm" or "mdbabdm".
+Example 3:
+
+Input: s = "leetcode"
+Output: 5
+Explanation: Inserting 5 characters the string becomes "leetcodocteel".
+ 
+
+Constraints:
+
+1 <= s.length <= 500
+s consists of lowercase English letters.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Explanation :
+
+what's this problem is about ? you are checking the minimum no. of characters to add to make the string palindrome.
+lets talk about palindrome, for even length, half of the string reverse of the other half, and for odd length, the string is mirrored at the middle index.
+in simple words the reverse of the string itself the string.
+so lets say, how many characters does the reverse and actual string differ=> 0.
+aab => baa to make first to second, you can add 'b' at the first of aab. so it become palindrome,
+so what we mainly check is, the max sub sequence length => and remove it from the max sub sequence length.
+so the we can add missing character at each place.
+
+if a character matches => we just add it to prev[j-1]+1.
+otherwise => prev[j] or dp[j-1]. like take the latest prev index value or last current index value, i.e, 
+the max sub sequence for j characters of r, and i-1 characters of s or j-1 characters of r and i characters of s.
+because at each index we just check if it can make a increase in subsequence.
+
+return dp[len] => last length- it will return max subsequence length.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution :
+
+class Solution {
+    public int minInsertions(String s) {
+        String r = new StringBuilder(s).reverse().toString();
+        int len = s.length();
+        int[] dp = new int[len+1];
+        int[] tmp = new int[len+1];
+
+        for(int i=1;i<=len;i++){            
+            for(int j=1;j<=len;j++){
+                if(s.charAt(i-1)==r.charAt(j-1)){
+                    dp[j] = tmp[j-1]+1;
+                }
+                else{
+                    dp[j]=Math.max(tmp[j],dp[j-1]);
+                }
+            }
+            for(int j=0;j<=len;j++)
+                tmp[j]=dp[j];
+        }
+        return len - dp[len];
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
