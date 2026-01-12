@@ -1,0 +1,137 @@
+
+Program : https://www.geeksforgeeks.org/problems/articulation-point-1/1
+
+Problem :
+Given an undirected connected graph with V vertices and adjacency list adj. You are required to find all the vertices removing which (and edges through it) disconnects the graph into 2 or more components and return it in sorted manner.
+Note: Indexing is zero-based i.e nodes numbering from (0 to V-1). There might be loops present in the graph.
+
+Example 1:
+
+Input:
+
+Output:{1,4}
+Explanation: Removing the vertex 1 will
+discconect the graph as-
+
+Removing the vertex 4 will disconnect the
+graph as-
+
+ 
+
+Your Task:
+You don't need to read or print anything. Your task is to complete the function articulationPoints() which takes V and adj as input parameters and returns a list containing all the vertices removing which turn the graph into two or more disconnected components in sorted order. If there are no such vertices then returns a list containing -1.
+ 
+
+Expected Time Complexity: O(V + E)
+Expected Auxiliary Space: O(V)
+ 
+
+Constraints:
+1 ≤ V ≤ 105
+
+______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+Explanation :
+1. First we do all the basic steps, on the start the of the node itself we set it as visited.
+
+2. Lets say we are starting from root, and visit all unvisited children in dfs manner.
+now maintain a counter for direct children of the root, if the graph forms cycle, then we can say there is only one children, because in the way of dfs we will reach all nodes.
+so if root, and children count is 1, then it is not articulation point.
+thats what our end command in our dfs.
+
+        int children = 0;
+
+        for(int v : adj.get(u)){
+            if(!visited[v]){
+                children++;
+            }
+        }
+
+        if(parent==-1 && children > 1)
+            aps[u] = true;
+
+3. if parent is came as child -> just continue;
+
+4. We will maintain timer where each node can be discovered at which time. so once a node is visited, we will store it and won't change it later.
+Also store the minimum distance from the root for a node, in the presence of cycles, we may reach a node in less time.
+so we start disc[u] = low[u] = timer++;
+but if we get a node that is already visited, then it is a cycle, so as to maintain, we update low[v] with the first value where cycle formed.
+so until we reach that node again we update all the nodes with that least value.
+dfs();
+low[u] = min(low[u],low[v]);
+
+4. if there is no cycle, the least time a child of a parent is always greater than the discovery time of parent.
+(remember discovery time is always the max possible time, so least time of child reach is greater than the parent node's max possible time).
+so, 
+
+                if(low[v]>=disc[u]){
+                    aps[u]=true;
+                }
+
+remember, end point, that is root, if remove the root there won't  be any increase in independent components.
+so, 
+
+                if(parent!=-1 && low[v]>=disc[u]){
+                    aps[u]=true;
+                }
+
+5. as i mentioned, in the place of back end, i.e, cycle, we have to update the parent's reachable to child's reaching time.
+visited[v] => means here discovery[v] is always less value.
+
+                low[u] = Math.min(low[u],disc[v]);
+
+in this way we find all the articulation points.
+______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+Solution : 
+
+class Solution {
+    // Function to return Breadth First Traversal of given graph.
+    int times = 0;
+    void dfs(int u,int parent,int[] disc,int[] low,boolean[] visited,
+        boolean[] aps,ArrayList<ArrayList<Integer>> adj){
+        disc[u]=low[u]=times++;
+        visited[u]=true;
+        
+        int children = 0;
+        for(int v : adj.get(u)){
+            if(v==parent) continue;
+            if(!visited[v]){
+                children++;
+                dfs(v,u,disc,low,visited,aps,adj);
+                low[u] = Math.min(low[u],low[v]);
+                
+                if(parent!=-1 && low[v]>=disc[u]){
+                    aps[u]=true;
+                }
+            }
+            else{
+                low[u] = Math.min(low[u],disc[v]);
+            }
+        }
+        if(parent==-1 && children > 1)
+            aps[u] = true;
+    }
+
+    public ArrayList<Integer> articulationPoints(int V,
+        ArrayList<ArrayList<Integer>> adj) {
+        // Code here
+        int len = adj.size();
+        int[] disc = new int[len];
+        int[] low = new int[len];
+        boolean[] visited = new boolean[len];
+        boolean[] aps = new boolean[len];
+        for(int i=0;i<len;i++){
+            if(!visited[i])
+                dfs(i,-1,disc,low,visited,aps,adj);
+        }
+        
+        ArrayList<Integer> res=new ArrayList<>();
+        for(int i=0;i<len;i++){
+            if(aps[i]) res.add(i);
+        }
+        if(res.size()==0)
+            res.add(-1);
+        return res;
+    }
+}
