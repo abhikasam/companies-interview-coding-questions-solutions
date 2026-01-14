@@ -1,0 +1,140 @@
+
+Program : https://leetcode.com/problems/making-a-large-island/
+
+Companies : #intuit
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Problem : 
+
+You are given an n x n binary matrix grid. You are allowed to change at most one 0 to be 1.
+
+Return the size of the largest island in grid after applying this operation.
+
+An island is a 4-directionally connected group of 1s.
+
+ 
+
+Example 1:
+
+Input: grid = [[1,0],[0,1]]
+Output: 3
+Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.
+Example 2:
+
+Input: grid = [[1,1],[1,0]]
+Output: 4
+Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.
+Example 3:
+
+Input: grid = [[1,1],[1,1]]
+Output: 4
+Explanation: Can't change any 0 to 1, only one island with area = 4.
+ 
+
+Constraints:
+
+n == grid.length
+n == grid[i].length
+1 <= n <= 500
+grid[i][j] is either 0 or 1.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Explanation :
+
+Here what approach can we use ? 
+island width -> no. of elements in the island.
+First we have to group the islands, and start with all zeros, add return the neighbors width and return +1.
+so while adding neighbors width we have to element the width of the island that is already added.
+
+to group islands, instead of using visited with 2d boolean array, we will take 2d int[], and for each island we will give visited[r][c] its respective value.
+we store the island and its width in map or int[], int[] is best for fast retrieval.
+and we iterate through zeros, and check all top, left, right, bottom, and take all different islands.
+and then return the max possible island width when we combine two islands.
+
+it is such a simple program using bfs, with added extra functionality.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class Solution {
+    int[][] dir = { {-1,0},{0,-1},{1,0},{0,1} };
+    int island = 1;
+    int coordinates(int r,int c,int[][] grid,int[][] visited){
+        int len = grid.length;
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{ r,c });
+        visited[r][c] = island;
+
+        int count = 0;
+        while(!queue.isEmpty()){
+            count++;
+            int[] peek = queue.poll();
+            for(int[] d : dir){
+                int nr = d[0]+peek[0];
+                int nc = d[1]+peek[1];
+                if(nr<0 || nc<0 || nr==len || nc == len) continue;
+                if(visited[nr][nc]!=0) continue;
+                if(grid[nr][nc]==1){
+                    queue.offer(new int[]{ nr,nc });
+                    visited[nr][nc] = island;
+                }
+            }
+        }
+        return count;
+    }
+    public int largestIsland(int[][] grid) {
+        int len = grid.length;
+        int[][] visited=new int[len][len];
+        int[] area = new int[len*len+1];
+
+        int max = 0;
+        int totalOne = 0;
+        for(int i=0;i<len;i++){
+            for(int j=0;j<len;j++){
+                if(grid[i][j]==1 && visited[i][j]==0){
+                    int width = coordinates(i,j,grid,visited);
+                    totalOne+= width;
+                    area[island++]=width;
+                }
+            }
+        }
+
+        if(len*len==totalOne)
+            return totalOne;
+
+        for(int i=0;i<len;i++){
+            for(int j=0;j<len;j++){
+                if(grid[i][j]==0){
+                    max = Math.max(max,getMaxArea(i,j,visited,area));
+                }
+            }
+        }
+
+        return max;
+    }
+
+    int getMaxArea(int r,int c,int[][] visited,int[] area){
+        int len = visited.length;
+        int top = 0,right = 0,left = 0,bottom = 0;
+        if(r!=0) top = visited[r-1][c];
+        if(c!=0) left = visited[r][c-1];
+        if(r!=len-1) right = visited[r+1][c];
+        if(c!=len-1) bottom = visited[r][c+1];
+
+        int sum = 0;
+        int[] islands = { top,left,right, bottom};
+
+        sum+=area[top];
+        for(int i=1;i<4;i++){
+            boolean dup = false;
+            for(int j=0;j<i;j++){
+                if(islands[i]==islands[j]){
+                    dup=true;
+                    break;
+                }
+            }
+            if(!dup) sum+=area[islands[i]];
+        }
+        return sum+1;
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
