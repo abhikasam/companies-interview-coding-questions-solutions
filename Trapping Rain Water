@@ -1,6 +1,7 @@
 Companies :-
 
-#Affirm, #Airbnb, #Amazon, #Apple, #Audible, #BlackRock, #Bloomberg, #Citadel, #Databricks, #Plaid, #eBay, #ElectronicArts, #Facebook, #Flipkart, #GoldmanSachs, #Google, #Huawei, #Lyft, #Microsoft, #NVIDIA, #Oracle, #Okta, #Qualtrics, #Salesforce, #ServiceNow, #Snapchat, #Tableau, #X, #Uber, #Visa, #Wish, #Yahoo, #Yandex
+#Affirm, #Airbnb, #Amazon, #Apple, #Audible, #BlackRock, #Bloomberg, #Citadel, #Databricks, #Plaid, #eBay, #ElectronicArts, #Facebook, #Flipkart, #GoldmanSachs, #Google,
+#Huawei, #Lyft, #Microsoft, #NVIDIA, #Oracle, #Okta, #Qualtrics, #Salesforce, #ServiceNow, #Snapchat, #Tableau, #X, #Uber, #Visa, #Wish, #Yahoo, #Yandex
 _____________________________________________________________________________________________________________________________________________________________________________
 Problem : 
 Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
@@ -22,6 +23,42 @@ n == height.length
 _____________________________________________________________________________________________________________________________________________________________________________
 
 Explanation :-
+
+Here, what is the best way to solve the program.
+for every index we should know the leftMax and rightMax so that we will get the minimum of them (because the max one will overflow, the water will flow out of the min
+building), and we will get the minHeight among leftMax and rightMax, and we will calculate the current gap. i.e, (minHeight-current).
+
+if(lmax < rmax)
+ total += leftMax - height[left];
+else
+ total += rightMax - height[right];
+
+Wait, what if the current building height is greater than or equal to any of them.
+then we can't store the water right, so in that case, we will just update the max of left or right based on that.
+
+if(leftMax > height[left])
+ total += leftMax - height[left];
+else leftMax = height[left];
+
+same way for right only.
+
+if(rightMax > height[right])
+    total += rightMax - height[right];
+else rightMax = height[right];
+
+so, we just start with left as 0, and right as (len-1) as per the both ends.
+and leftMax and rightMax as 0, total also 0.
+We'll doing it till both left and right meet at same index.
+
+
+Wait, the problem started giving TimeLimitException ? just O(n) program giving this error ? what went wrong ?
+
+at each index, we comparing lmax and rmax, and storing the water trapped.
+Here, comes the condition of rain water overflow for the maxHeight.
+
+so lmax < rmax => so i will ignore the rmax and calculate the trapped water, and move the left index as we have calculated water at that index.
+similarly we do it on right side.
+
 
 _____________________________________________________________________________________________________________________________________________________________________________
 Solution :- 
