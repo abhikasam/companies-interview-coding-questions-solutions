@@ -1,5 +1,5 @@
 
-______________________________________________________________________________________________________________________________________________________
+_____________________________________________________________________________________________________________________________________________________
 Companies :
 
 #Alibaba #Amazon #Apple #Asana #Baidu #BlackRock #Booz Allen Hamilton #Cisco #Citadel #Coursera #Coinbase #DocuSign #DoorDash #Dropbox #eBay #Expedia #Facebook #GoDaddy #Goldman Sachs #Google #Grab #HBO #Intuit #JPMorgan Chase #LinkedIn #Lyft #Microsoft #Morgan Stanley #Nutanix #NVIDIA #Oracle #Otter.ai #PayPal #Pinterest #Roblox #Salesforce #SAP #Snapchat #Spotify #Tesla #Tripadvisor #Twilio #Twitch #X #Uber #Visa #VMware #Wish #Yahoo #Yandex #Zillow
@@ -51,9 +51,10 @@ ________________________________________________________________________________
 Explanation :
 
 <img width="846" height="1136" alt="image" src="https://github.com/user-attachments/assets/e6114d67-848f-4f23-8f9b-e51a2459b176" />
-_______________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________
 
 Solution :
+
 ```java
 class Node{
     int key;
