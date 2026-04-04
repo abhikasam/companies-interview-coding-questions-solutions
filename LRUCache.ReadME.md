@@ -2,6 +2,7 @@
 ______________________________________________________________________________________________________________________________________________________
 Companies :
 
+#Alibaba #Amazon #Apple #Asana #Baidu #BlackRock #Booz Allen Hamilton #Cisco #Citadel #Coursera #Coinbase #DocuSign #DoorDash #Dropbox #eBay #Expedia #Facebook #GoDaddy #Goldman Sachs #Google #Grab #HBO #Intuit #JPMorgan Chase #LinkedIn #Lyft #Microsoft #Morgan Stanley #Nutanix #NVIDIA #Oracle #Otter.ai #PayPal #Pinterest #Roblox #Salesforce #SAP #Snapchat #Spotify #Tesla #Tripadvisor #Twilio #Twitch #X #Uber #Visa #VMware #Wish #Yahoo #Yandex #Zillow
 ______________________________________________________________________________________________________________________________________________________
 
 Problem :
